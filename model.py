@@ -59,7 +59,7 @@ class FoodCNN(nn.Module):
         self.flatten = nn.Flatten()
 
         #fully connected layers of the model, working with the flatten version of the input
-        self.fc1 = nn.Linear(256*32*32, 512)
+        self.fc1 = nn.Linear(16384, 512)
         self.fc2 = nn.Linear(512, 128)
         self.fc3 = nn.Linear(128 ,91)
 
