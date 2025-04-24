@@ -52,6 +52,7 @@ class FoodCNN(nn.Module):
         self.conv3 = nn.Conv2d(32, 64, 5, 1, padding=1)
         self.conv4 = nn.Conv2d(64, 128, 5, 1, padding=1)
         self.conv5 = nn.Conv2d(128, 256, 5, 1, padding=1)
+        self.conv6 = nn.Conv2d(256, 1024, 5, 1, padding=1)
 
         #pooling reduces the dimensions by half
         self.pool = nn.MaxPool2d(2,2)
@@ -59,8 +60,7 @@ class FoodCNN(nn.Module):
         self.flatten = nn.Flatten()
 
         #fully connected layers of the model, working with the flatten version of the input
-        self.fc1 = nn.Linear(4096, 1024)
-        self.fc2 = nn.Linear(1024, 512)
+        self.fc1 = nn.Linear(4096, 512)
         self.fc3 = nn.Linear(512, 128)
         self.fc4 = nn.Linear(128 ,91)
 
