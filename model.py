@@ -52,7 +52,6 @@ class FoodCNN(nn.Module):
         self.conv3 = nn.Conv2d(32, 64, 5, 1, padding=1)
         self.conv4 = nn.Conv2d(64, 128, 5, 1, padding=1)
         self.conv5 = nn.Conv2d(128, 256, 5, 1, padding=1)
-        self.conv6 = nn.Conv2d(256, 1024, 5, 1, padding=1)
 
         #pooling reduces the dimensions by half
         self.pool = nn.MaxPool2d(2,2)
@@ -60,7 +59,7 @@ class FoodCNN(nn.Module):
         self.flatten = nn.Flatten()
 
         #fully connected layers of the model, working with the flatten version of the input
-        self.fc1 = nn.Linear(4096, 512)
+        self.fc1 = nn.Linear(9216, 512)
         self.fc2 = nn.Linear(512, 128)
         self.fc3 = nn.Linear(128 ,91)
 
@@ -82,8 +81,6 @@ class FoodCNN(nn.Module):
         X = self.pool(X)
         X = F.relu(self.conv5(X))
         X = self.pool(X)
-        X = F.relu(self.conv6(X))
-        X = self.pool(X)
 
         #flattens the input to fully connected layers
         X = self.flatten(X)
@@ -100,7 +97,7 @@ class FoodCNN(nn.Module):
 def _train_and_save_model(self):
     self.to(device)
     torch.manual_seed(18)
-    epochs = 10
+    epochs = 5
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
@@ -133,7 +130,7 @@ def _train_and_save_model(self):
             total_train += y_train.size(0)
 
         train_accuracy = (training_correct / total_train) / 100
-        print(f"Training accuracy of epoch {e+1}/{epochs}: {train_accuracy}.")
+        print(f"Training accuracy of epoch {e+1}: {train_accuracy}.")
 
         if train_accuracy > best_train_accuracy:
             best_train_accuracy = train_accuracy
