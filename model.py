@@ -9,6 +9,8 @@ import numpy as np
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# comment
+
 torch.manual_seed(18)
 random.seed(18)
 np.random.seed(18)
@@ -48,6 +50,8 @@ class FoodCNN(nn.Module):
         self.conv1 = nn.Conv2d(3, 16, 3, 1, padding=1)
         self.conv2 = nn.Conv2d(16, 32, 3, 1, padding=1)
         self.conv3 = nn.Conv2d(32, 64, 3, 1, padding=1)
+        self.conv4 = nn.Conv2d(64, 128, 3, 1, padding=1)
+        self.conv5 = nn.Conv2d(128, 256, 3, 1, padding=1)
 
         #pooling reduces the dimensions by half
         self.pool = nn.MaxPool2d(2,2)
@@ -73,6 +77,10 @@ class FoodCNN(nn.Module):
         X = self.pool(X)
         X = F.relu(self.conv3(X))
         X = self.pool(X)
+        X = F.relu(self.conv4(X))
+        X = self.pool(X)
+        X = F.relu(self.conv5(X))
+        X = self.pool(X)
 
         #flattens the input to fully connected layers
         X = self.flatten(X)
@@ -89,8 +97,7 @@ class FoodCNN(nn.Module):
 def _train_and_save_model(self):
     self.to(device)
     torch.manual_seed(18)
-    #epoch = 5
-    epochs = 1
+    epochs = 5
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(self.parameters(), lr=0.01)
