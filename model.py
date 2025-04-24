@@ -22,8 +22,8 @@ transform = transforms.ToTensor()
 
 # Define transformations (convert to tensor + normalize if you want)
 transform = transforms.Compose([
-    transforms.Resize(196),
-    transforms.CenterCrop(196),
+    transforms.Resize(256),
+    transforms.CenterCrop(256),
     transforms.ToTensor(),  # Convert PIL image to Tensor
     # NORMALISATION -do or not do- 3 channels with each entry in range [0-1]
     transforms.Normalize(mean=[0.5,0.5,0.5], std=[0.5,0.5,0.5]) 
@@ -61,8 +61,8 @@ class FoodCNN(nn.Module):
 
         #fully connected layers of the model, working with the flatten version of the input
         self.fc1 = nn.Linear(4096, 512)
-        self.fc3 = nn.Linear(512, 128)
-        self.fc4 = nn.Linear(128 ,91)
+        self.fc2 = nn.Linear(512, 128)
+        self.fc3 = nn.Linear(128 ,91)
 
         #optionally
         #self.fc1 = Linear(64*32*32, 256)
@@ -82,15 +82,16 @@ class FoodCNN(nn.Module):
         X = self.pool(X)
         X = F.relu(self.conv5(X))
         X = self.pool(X)
+        X = F.relu(self.conv6(X))
+        X = self.pool(X)
 
         #flattens the input to fully connected layers
         X = self.flatten(X)
 
         X = F.relu(self.fc1(X))
         X = F.relu(self.fc2(X))
-        X = F.relu(self.fc3(X))
         #last layer categorises the input
-        X = self.fc4(X)
+        X = self.fc3(X)
         return X
     
     def _train_and_save_model(self):
