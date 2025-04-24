@@ -22,8 +22,8 @@ transform = transforms.ToTensor()
 
 # Define transformations (convert to tensor + normalize if you want)
 transform = transforms.Compose([
-    transforms.Resize(256),
-    transforms.CenterCrop(256),
+    transforms.Resize(196),
+    transforms.CenterCrop(196),
     transforms.ToTensor(),  # Convert PIL image to Tensor
     # NORMALISATION -do or not do- 3 channels with each entry in range [0-1]
     transforms.Normalize(mean=[0.5,0.5,0.5], std=[0.5,0.5,0.5]) 
@@ -59,9 +59,10 @@ class FoodCNN(nn.Module):
         self.flatten = nn.Flatten()
 
         #fully connected layers of the model, working with the flatten version of the input
-        self.fc1 = nn.Linear(9216, 512)
-        self.fc2 = nn.Linear(512, 128)
-        self.fc3 = nn.Linear(128 ,91)
+        self.fc1 = nn.Linear(9216, 1024)
+        self.fc2 = nn.Linear(1024, 512)
+        self.fc3 = nn.Linear(512, 128)
+        self.fc4 = nn.Linear(128 ,91)
 
         #optionally
         #self.fc1 = Linear(64*32*32, 256)
@@ -87,8 +88,9 @@ class FoodCNN(nn.Module):
 
         X = F.relu(self.fc1(X))
         X = F.relu(self.fc2(X))
+        X = F.relu(self.fc3(X))
         #last layer categorises the input
-        X = self.fc3(X)
+        X = self.fc4(X)
         return X
     
     def _train_and_save_model(self):
@@ -97,7 +99,7 @@ class FoodCNN(nn.Module):
 def _train_and_save_model(self):
     self.to(device)
     torch.manual_seed(18)
-    epochs = 5
+    epochs = 10
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
@@ -130,7 +132,7 @@ def _train_and_save_model(self):
             total_train += y_train.size(0)
 
         train_accuracy = (training_correct / total_train) / 100
-        print(f"Training accuracy of epoch {e+1}: {train_accuracy}.")
+        print(f"Training accuracy of epoch {e+1}/{epochs}: {train_accuracy}.")
 
         if train_accuracy > best_train_accuracy:
             best_train_accuracy = train_accuracy
