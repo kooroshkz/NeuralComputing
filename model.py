@@ -35,7 +35,6 @@ test_dataset = datasets.ImageFolder(root="test", transform=transform)
 
 # reads an example image
 image, label = train_dataset[84]
-print(image, label)
 
 # Use DataLoaders -> adjust batch size (batch size-number of pictures processed at once)
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
@@ -59,7 +58,7 @@ class FoodCNN(nn.Module):
         self.flatten = nn.Flatten()
 
         #fully connected layers of the model, working with the flatten version of the input
-        self.fc1 = nn.Linear(9216, 512)
+        self.fc1 = nn.Linear(2304, 512)
         self.fc2 = nn.Linear(512, 128)
         self.fc3 = nn.Linear(128 ,91)
 
