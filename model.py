@@ -9,8 +9,6 @@ import numpy as np
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# comment
-
 torch.manual_seed(18)
 random.seed(18)
 np.random.seed(18)
@@ -23,7 +21,7 @@ transform = transforms.ToTensor()
 # Define transformations (convert to tensor + normalize if you want)
 transform = transforms.Compose([
     transforms.Resize(256),
-    transforms.CenterCrop(160),
+    transforms.CenterCrop(256),
     transforms.ToTensor(),  # Convert PIL image to Tensor
     # NORMALISATION -do or not do- 3 channels with each entry in range [0-1]
     transforms.Normalize(mean=[0.5,0.5,0.5], std=[0.5,0.5,0.5]) 
@@ -35,10 +33,11 @@ test_dataset = datasets.ImageFolder(root="test", transform=transform)
 
 # reads an example image
 image, label = train_dataset[84]
+print(image, label)
 
 # Use DataLoaders -> adjust batch size (batch size-number of pictures processed at once)
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -46,11 +45,9 @@ class FoodCNN(nn.Module):
     def __init__(self):
         super().__init__()
         #all the convolutional layers
-        self.conv1 = nn.Conv2d(3, 16, 5, 1, padding=1)
-        self.conv2 = nn.Conv2d(16, 32, 5, 1, padding=1)
-        self.conv3 = nn.Conv2d(32, 64, 5, 1, padding=1)
-        self.conv4 = nn.Conv2d(64, 128, 5, 1, padding=1)
-        self.conv5 = nn.Conv2d(128, 256, 5, 1, padding=1)
+        self.conv1 = nn.Conv2d(3, 16, 3, 1, padding=1)
+        self.conv2 = nn.Conv2d(16, 32, 3, 1, padding=1)
+        self.conv3 = nn.Conv2d(32, 64, 3, 1, padding=1)
 
         #pooling reduces the dimensions by half
         self.pool = nn.MaxPool2d(2,2)
@@ -58,7 +55,7 @@ class FoodCNN(nn.Module):
         self.flatten = nn.Flatten()
 
         #fully connected layers of the model, working with the flatten version of the input
-        self.fc1 = nn.Linear(2304, 512)
+        self.fc1 = nn.Linear(64*32*32, 512)
         self.fc2 = nn.Linear(512, 128)
         self.fc3 = nn.Linear(128 ,91)
 
@@ -76,10 +73,6 @@ class FoodCNN(nn.Module):
         X = self.pool(X)
         X = F.relu(self.conv3(X))
         X = self.pool(X)
-        X = F.relu(self.conv4(X))
-        X = self.pool(X)
-        X = F.relu(self.conv5(X))
-        X = self.pool(X)
 
         #flattens the input to fully connected layers
         X = self.flatten(X)
@@ -96,10 +89,11 @@ class FoodCNN(nn.Module):
 def _train_and_save_model(self):
     self.to(device)
     torch.manual_seed(18)
-    epochs = 30
+    #epoch = 5
+    epochs = 1
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(self.parameters(), lr=0.01)
 
     best_train_accuracy = 0.0
 
