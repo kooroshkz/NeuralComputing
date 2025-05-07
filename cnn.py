@@ -48,8 +48,8 @@ test_transform = transforms.Compose([
 ])
 
 # Load datasets with correct transforms
-train_dataset = datasets.ImageFolder(root="../train", transform=train_transform) 
-test_dataset = datasets.ImageFolder(root="../test", transform=test_transform)
+train_dataset = datasets.ImageFolder(root="train", transform=train_transform)
+test_dataset = datasets.ImageFolder(root="test", transform=test_transform)
 
 # Read an example image
 image, label = train_dataset[84]
@@ -59,8 +59,8 @@ print(image.shape, label)
 num_workers = min(14, os.cpu_count())  # auto-detect cpu core count, cap at 6 (lower this cap if system crashes)
 
 # Create DataLoaders
-train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True, num_workers=num_workers, pin_memory=True, persistent_workers=True)
-test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False, num_workers=num_workers, pin_memory=True, persistent_workers=True)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=num_workers, pin_memory=True, persistent_workers=True)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=num_workers, pin_memory=True, persistent_workers=True)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
