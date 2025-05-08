@@ -98,7 +98,7 @@ class FoodCNN(nn.Module):
             nn.Flatten(),
             nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Dropout(0.25),
+            nn.Dropout(0.15),
             nn.Linear(128, 91)
         )
         
@@ -164,7 +164,7 @@ def calculate_test_accuracy(model, test_loader):
 def _train_and_save_model(self):
     self.to(device)
     torch.manual_seed(18)
-    epochs = 70  # or however many you want
+    epochs = 100  # or however many you want
 
     #ADAM
     #optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
