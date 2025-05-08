@@ -48,8 +48,8 @@ test_transform = transforms.Compose([
 ])
 
 # Load datasets with correct transforms
-train_dataset = datasets.ImageFolder(root="/train", transform=train_transform) 
-test_dataset = datasets.ImageFolder(root="/test", transform=test_transform)
+train_dataset = datasets.ImageFolder(root="../train", transform=train_transform) 
+test_dataset = datasets.ImageFolder(root="../test", transform=test_transform)
 
 # Read an example image
 image, label = train_dataset[84]
