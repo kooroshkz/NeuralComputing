@@ -171,7 +171,7 @@ def _train_and_save_model(self):
     #scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs) # learning rate gradaully decreases naturally (fight overfitting)
     #SGD
     optimizer = torch.optim.SGD(self.parameters(), lr=0.0125, momentum=0.9, weight_decay=1e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,mode='min',factor=0.5,patience=5,min_lr=0.001,verbose=True)       
     criterion = nn.CrossEntropyLoss()
     scaler = GradScaler(device=device_type)
 
@@ -205,7 +205,7 @@ def _train_and_save_model(self):
             training_correct += (label_pred == y_train).sum().item()
             total_train += y_train.size(0)
             
-        scheduler.step()
+        #scheduler.step()
 
         train_accuracy = (training_correct / total_train) * 100
         print(f"Training accuracy of epoch {e+1}: {train_accuracy:.2f}%")
@@ -214,6 +214,19 @@ def _train_and_save_model(self):
 
         # Evaluate test accuracy every 'self.test_eval_interval' epochs
         if (e + 1) % self.test_eval_interval == 0 or e == epochs - 1:
+            self.eval()
+            val_loss = 0.0
+            with torch.no_grad():
+                for X_val, y_val in test_loader:  # use a separate val_loader if you have one
+                    X_val, y_val = X_val.to(device), y_val.to(device)
+                    with autocast(device_type=device_type, dtype=torch.float16 if device_type=="cuda" else torch.bfloat16):
+                        y_val_pred = self(X_val)
+                        loss = criterion(y_val_pred, y_val)
+                    val_loss += loss.item() * X_val.size(0)
+            val_loss /= len(test_loader.dataset)
+
+            scheduler.step(val_loss)  # ← THIS is the correct place
+            
             test_accuracy = calculate_test_accuracy(self, test_loader)
             test_accuracies.append(test_accuracy)
             print(f"Test accuracy of epoch {e+1}: {test_accuracy:.2f}%")
