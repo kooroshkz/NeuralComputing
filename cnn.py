@@ -98,7 +98,7 @@ class FoodCNN(nn.Module):
             nn.Flatten(),
             nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Dropout(0.30),
+            nn.Dropout(0.25),
             nn.Linear(128, 91)
         )
         
@@ -170,7 +170,7 @@ def _train_and_save_model(self):
     #optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
     #scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs) # learning rate gradaully decreases naturally (fight overfitting)
     #SGD
-    optimizer = torch.optim.SGD(self.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)
+    optimizer = torch.optim.SGD(self.parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
     criterion = nn.CrossEntropyLoss()
     scaler = GradScaler(device=device_type)
