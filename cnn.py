@@ -169,7 +169,7 @@ def _train_and_save_model(self):
     #optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
     #scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs) # learning rate gradaully decreases naturally (fight overfitting)
     #SGD
-    optimizer = torch.optim.SGD(self.parameters(), lr=0.05, momentum=0.9, weight_decay=1e-4)
+    optimizer = torch.optim.SGD(self.parameters(), lr=0.03, momentum=0.9, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,mode='min',factor=0.5,patience=5,min_lr=0.001)       
     criterion = nn.CrossEntropyLoss()
     scaler = GradScaler(device=device_type)
