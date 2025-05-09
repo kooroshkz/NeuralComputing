@@ -90,21 +90,12 @@ class FoodCNN(nn.Module):
             nn.Conv2d(256, 256, 3, padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(),
-            nn.MaxPool2d(2),
-
-            nn.Conv2d(256, 512, 3, padding=1),  # using 512 filters (within 470–570 range)
-            nn.BatchNorm2d(512),
-            nn.ReLU(),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU(),
-
             nn.AdaptiveAvgPool2d((1, 1))  # outputs (batch_size, 256, 1, 1)
         )
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(512, 128),
+            nn.Linear(256, 128),
             nn.ReLU(),
             nn.Dropout(0.25),
             nn.Linear(128, 91)
@@ -172,7 +163,7 @@ def calculate_test_accuracy(model, test_loader):
 def _train_and_save_model(self):
     self.to(device)
     torch.manual_seed(18)
-    epochs = 100  # or however many you want
+    epochs = 80  # or however many you want
 
     #ADAM
     #optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
