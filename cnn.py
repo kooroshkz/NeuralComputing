@@ -212,11 +212,13 @@ def _train_and_save_model(self):
             scaler.step(optimizer)
             scaler.update()
 
+            scheduler.step()
+
             label_pred = torch.argmax(y_pred, dim=1)
             training_correct += (label_pred == y_train).sum().item()
             total_train += y_train.size(0)
             
-        scheduler.step()
+       # scheduler.step()
 
         train_accuracy = (training_correct / total_train) * 100
         print(f"Training accuracy of epoch {e+1}: {train_accuracy:.2f}%")
