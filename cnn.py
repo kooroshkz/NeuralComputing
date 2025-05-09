@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from torch.amp import GradScaler, autocast
 from tqdm import tqdm
+from torch.optim.lr_scheduler import OneCycleLR
 import random
 from collections import Counter
 import numpy as np
@@ -170,8 +171,18 @@ def _train_and_save_model(self):
     #optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
     #scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs) # learning rate gradaully decreases naturally (fight overfitting)
     #SGD
-    optimizer = torch.optim.SGD(self.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+    optimizer = torch.optim.SGD(self.parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4)
+    scheduler = OneCycleLR(
+        optimizer,
+        max_lr=0.1,  
+        steps_per_epoch=len(train_loader),
+        epochs=epochs,  
+        pct_start=0.3,  # % of cycle spent increasing LR
+        anneal_strategy='cos',  # Cosine annealing (optional)
+        div_factor=25.0,  # initial_lr = max_lr/div_factor
+        final_div_factor=1e4  # min_lr = initial_lr/final_div_factor
+    )
+   # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
     criterion = nn.CrossEntropyLoss()
     scaler = GradScaler(device=device_type)
 
