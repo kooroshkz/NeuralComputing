@@ -98,7 +98,7 @@ class FoodCNN(nn.Module):
             nn.Flatten(),
             nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Dropout(0.25),
+            nn.Dropout(0.30),
             nn.Linear(128, 91)
         )
         
